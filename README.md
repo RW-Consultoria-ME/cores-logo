@@ -49,7 +49,7 @@ A ferramenta funciona **100% no navegador (client-side)** — nenhuma imagem é 
 ## 🖥️ Screenshots
 
 <p align="center">
-  <img src="assets/screenshot-steps.png" alt="Como Funciona" width="800" />
+  <img src="assets/screenshot-step.png" alt="Como Funciona" width="800" />
 </p>
 
 <p align="center">
