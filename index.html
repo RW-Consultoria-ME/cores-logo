@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Extraia paletas de cores do logo da sua empresa para usar no Power BI. Upload rápido, sem armazenamento de imagem."
+    />
+    <title>PBI Palette — Gerador de Paletas de Cores para Power BI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header" id="header">
+      <div class="header-container">
+        <div class="logo-brand">
+          <div class="logo-icon">
+            <img
+              src="image/logo.jpg"
+              alt="RW Consultoria"
+              width="50"
+              height="50"
+              class="header-logo-img"
+            />
+          </div>
+          <span class="brand-text"
+            >RW <span class="brand-accent">Consultoria</span></span
+          >
+        </div>
+        <nav class="header-nav">
+          <a href="#upload-section" class="nav-link">Upload</a>
+          <a href="#como-funciona" class="nav-link">Como Funciona</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+      <div class="hero-bg-effects">
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
+        <div class="hero-orb hero-orb-3"></div>
+        <div class="hero-grid"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          100% Client-Side — Nenhuma imagem é salva
+        </div>
+        <h1 class="hero-title">
+          Transforme seu <span class="gradient-text">Logo</span> em<br />
+          uma paleta <span class="gradient-text-2">Power BI</span>
+        </h1>
+        <p class="hero-subtitle">
+          Faça upload do logo da sua empresa e gere instantaneamente uma paleta
+          de cores completa com variações para seus dashboards no Power BI.
+        </p>
+        <a href="#upload-section" class="hero-cta">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Começar Agora
+        </a>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works" id="como-funciona">
+      <div class="section-container">
+        <h2 class="section-title">
+          Como <span class="gradient-text">Funciona</span>
+        </h2>
+        <p class="section-subtitle">
+          Em 3 passos simples, do logo ao dashboard perfeito
+        </p>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">01</div>
+            <div class="step-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+            </div>
+            <h3>Upload do Logo</h3>
+            <p>
+              Arraste ou selecione o logo da empresa. Suportamos PNG, JPG, SVG e
+              WebP.
+            </p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">02</div>
+            <div class="step-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="13.5" cy="6.5" r="2.5" />
+                <path
+                  d="M17 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10z"
+                />
+                <circle cx="10.5" cy="13.5" r="2.5" />
+                <circle cx="16" cy="16" r="2" />
+              </svg>
+            </div>
+            <h3>Extração Inteligente</h3>
+            <p>
+              Nosso algoritmo identifica as cores dominantes e cria variações
+              harmoniosas.
+            </p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">03</div>
+            <div class="step-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+            </div>
+            <h3>Paleta Pronta</h3>
+            <p>
+              Copie os códigos HEX e aplique diretamente nos temas do Power BI.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="upload-section" id="upload-section">
+      <div class="section-container">
+        <h2 class="section-title">
+          Upload do <span class="gradient-text">Logo</span>
+        </h2>
+        <p class="section-subtitle">
+          Arraste o arquivo ou clique para selecionar
+        </p>
+
+        <div class="upload-area" id="upload-area">
+          <div class="upload-content" id="upload-content">
+            <div class="upload-icon-wrapper">
+              <svg
+                class="upload-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+            </div>
+            <p class="upload-text">Arraste seu logo aqui</p>
+            <p class="upload-subtext">ou clique para selecionar</p>
+            <div class="upload-formats">PNG, JPG, SVG, WebP — Máx. 10MB</div>
+          </div>
+          <div class="upload-preview" id="upload-preview" style="display: none">
+            <img id="preview-image" alt="Preview do logo" />
+            <button class="remove-btn" id="remove-btn" title="Remover imagem">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+          <input
+            type="file"
+            id="file-input"
+            accept="image/png,image/jpeg,image/svg+xml,image/webp"
+            hidden
+          />
+        </div>
+
+        <div
+          class="color-count-selector"
+          id="color-count-selector"
+          style="display: none"
+        >
+          <label for="color-count">Quantidade de cores dominantes:</label>
+          <div class="count-btns">
+            <button class="count-btn" data-count="4">4</button>
+            <button class="count-btn active" data-count="6">6</button>
+            <button class="count-btn" data-count="8">8</button>
+            <button class="count-btn" data-count="10">10</button>
+          </div>
+          <button class="generate-btn" id="generate-btn">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+            Gerar Paleta
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section" id="results-section" style="display: none">
+      <div class="section-container">
+        <!-- Dominant Colors -->
+        <div class="result-block">
+          <h2 class="section-title">
+            Cores <span class="gradient-text">Dominantes</span>
+          </h2>
+          <p class="section-subtitle">
+            As cores principais extraídas do seu logo
+          </p>
+          <div class="colors-grid" id="dominant-colors"></div>
+        </div>
+
+        <!-- Full Palette -->
+        <div class="result-block">
+          <h2 class="section-title">
+            Paleta <span class="gradient-text-2">Completa</span>
+          </h2>
+          <p class="section-subtitle">
+            Variações de cada cor para uso no Power BI (claro → escuro)
+          </p>
+          <div class="palette-container" id="palette-container"></div>
+        </div>
+
+        <!-- Complementary / Neutral -->
+        <div class="result-block">
+          <h2 class="section-title">
+            Cores <span class="gradient-text">Neutras & Apoio</span>
+          </h2>
+          <p class="section-subtitle">
+            Backgrounds, textos e bordas para complementar seus dashboards
+          </p>
+          <div class="neutrals-grid" id="neutrals-grid"></div>
+        </div>
+
+        <!-- Power BI Theme JSON -->
+        <div class="result-block">
+          <h2 class="section-title">
+            Tema <span class="gradient-text-2">Power BI</span>
+          </h2>
+          <p class="section-subtitle">
+            Copie o JSON do tema e importe diretamente no Power BI Desktop
+          </p>
+          <div class="theme-json-wrapper">
+            <div class="json-header">
+              <span class="json-title">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="16 18 22 12 16 6" />
+                  <polyline points="8 6 2 12 8 18" />
+                </svg>
+                theme.json
+              </span>
+              <button class="copy-json-btn" id="copy-json-btn">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                  <path
+                    d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                  />
+                </svg>
+                Copiar JSON
+              </button>
+            </div>
+            <pre class="json-code"><code id="theme-json"></code></pre>
+          </div>
+          <button class="download-json-btn" id="download-json-btn">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Baixar Tema (.json)
+          </button>
+        </div>
+
+        <!-- Preview mockup -->
+        <div class="result-block">
+          <h2 class="section-title">
+            Preview do <span class="gradient-text">Dashboard</span>
+          </h2>
+          <p class="section-subtitle">
+            Visualize como as cores ficariam em um dashboard real
+          </p>
+          <div class="dashboard-preview" id="dashboard-preview"></div>
+        </div>
+
+        <!-- New upload button -->
+        <div class="new-upload-wrapper">
+          <button class="new-upload-btn" id="new-upload-btn">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+            </svg>
+            Novo Upload
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 RW Consultoria — Gerador de paletas para Power BI</p>
+        <p class="footer-note">
+          Nenhuma imagem é armazenada. Todo processamento acontece no seu
+          navegador.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+      <span id="toast-message">Cor copiada!</span>
+    </div>
+
+    <script src="color-extractor.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
