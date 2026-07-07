@@ -30,6 +30,152 @@
     let selectedColorCount = 6;
     let currentImageSrc = null;
     let currentPaletteData = null;
+    let themeMode = 'light'; // 'light' | 'dark'
+
+    // =========================================
+    // Theme Mode Toggle (claro/escuro)
+    // =========================================
+
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    const ruleBar = document.getElementById('rule-bar');
+    const ruleGrid = document.getElementById('rule-grid');
+
+    modeBtns.forEach(btn => {
+        btn.addEventListener('click', () => setThemeMode(btn.dataset.mode));
+    });
+
+    function setThemeMode(mode) {
+        if (mode === themeMode) return;
+        themeMode = mode;
+        modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+        // Re-render results if a palette already exists
+        if (currentPaletteData) {
+            currentPaletteData.roles = assignRoles(currentPaletteData.colors, themeMode);
+            renderResults(currentPaletteData);
+        }
+    }
+
+    // =========================================
+    // 60-30-10 Role Assignment
+    // =========================================
+
+    function hueDistance(h1, h2) {
+        const d = Math.abs(h1 - h2) % 360;
+        return d > 180 ? 360 - d : d;
+    }
+
+    function vibrancy(color) {
+        const [, s, l] = ColorExtractor.rgbToHsl(...color.rgb);
+        return s * (1 - Math.abs(l - 50) / 50);
+    }
+
+    /**
+     * Assign 60-30-10 roles:
+     * 60% = neutral base (canvas/surface/text) derived from brand hue + mode
+     * 30% = main data color (most vibrant, most present)
+     * 10% = accent (vibrant, hue-distinct from main)
+     */
+    function assignRoles(colors, mode) {
+        const ranked = [...colors].sort((a, b) => vibrancy(b) - vibrancy(a));
+        const main = ranked[0] || colors[0];
+        const [mainH] = ColorExtractor.rgbToHsl(...main.rgb);
+
+        // Accent: most vibrant color with hue far enough from main
+        let accent = ranked.slice(1).find(c => {
+            const [h] = ColorExtractor.rgbToHsl(...c.rgb);
+            return hueDistance(h, mainH) > 30 && vibrancy(c) > 5;
+        }) || ranked[1] || main;
+
+        // Average brand hue for tinting neutrals
+        let avgH = 0, hCount = 0;
+        for (const c of colors) {
+            const [h, s] = ColorExtractor.rgbToHsl(...c.rgb);
+            if (s > 5) { avgH += h; hCount++; }
+        }
+        avgH = hCount > 0 ? avgH / hCount : 0;
+
+        const hsl = (h, s, l) => ColorExtractor.rgbToHex(ColorExtractor.hslToRgb(h, s, l));
+
+        const base = mode === 'light'
+            ? {
+                canvas: hsl(avgH, 8, 97),
+                surface: '#ffffff',
+                text: hsl(avgH, 12, 15),
+                textSecondary: hsl(avgH, 8, 40),
+                border: hsl(avgH, 8, 88)
+            }
+            : {
+                canvas: hsl(avgH, 14, 8),
+                surface: hsl(avgH, 12, 13),
+                text: hsl(avgH, 6, 95),
+                textSecondary: hsl(avgH, 6, 65),
+                border: hsl(avgH, 10, 24)
+            };
+
+        const others = colors.filter(c => c.hex !== main.hex && c.hex !== accent.hex);
+
+        return { base, main, accent, others, mode };
+    }
+
+    // =========================================
+    // Render 60-30-10 Block
+    // =========================================
+
+    function renderRule(roles) {
+        const { base, main, accent } = roles;
+
+        ruleBar.innerHTML = `
+            <div class="rule-bar-segment" style="width:60%;background:${base.canvas};color:${ColorExtractor.getContrastColor(base.canvas)}">60%</div>
+            <div class="rule-bar-segment" style="width:30%;background:${main.hex};color:${ColorExtractor.getContrastColor(main.hex)}">30%</div>
+            <div class="rule-bar-segment" style="width:10%;background:${accent.hex};color:${ColorExtractor.getContrastColor(accent.hex)}">10%</div>
+        `;
+
+        const cards = [
+            {
+                percent: '60%',
+                title: 'Base / Fundo',
+                desc: 'Fundo da página, cartões e áreas neutras',
+                swatches: [
+                    { hex: base.canvas, label: 'Fundo da página' },
+                    { hex: base.surface, label: 'Fundo dos visuais' },
+                    { hex: base.text, label: 'Texto' },
+                    { hex: base.border, label: 'Bordas' }
+                ]
+            },
+            {
+                percent: '30%',
+                title: 'Cor Principal',
+                desc: 'Gráficos de barras, linhas e séries principais',
+                swatches: [{ hex: main.hex, label: 'Principal' }]
+            },
+            {
+                percent: '10%',
+                title: 'Destaque',
+                desc: 'KPIs, alertas e pontos de atenção',
+                swatches: [{ hex: accent.hex, label: 'Destaque' }]
+            }
+        ];
+
+        ruleGrid.innerHTML = cards.map(card => `
+            <div class="rule-card">
+                <div class="rule-card-percent">${card.percent}</div>
+                <div class="rule-card-title">${card.title}</div>
+                <div class="rule-card-desc">${card.desc}</div>
+                <div class="rule-card-swatches">
+                    ${card.swatches.map(s => `
+                        <div class="rule-swatch" data-hex="${s.hex}" title="${s.label}">
+                            <div class="rule-swatch-color" style="background:${s.hex}"></div>
+                            <span class="rule-swatch-hex">${s.hex.toUpperCase()}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+
+        ruleGrid.querySelectorAll('.rule-swatch').forEach(sw => {
+            sw.addEventListener('click', () => copyColor(sw.dataset.hex, sw));
+        });
+    }
 
     // =========================================
     // Upload Handling
@@ -182,7 +328,10 @@
         // Generate neutrals
         const neutrals = ColorExtractor.generateNeutrals(colors);
 
-        currentPaletteData = { colors, palettes, neutrals };
+        // Assign 60-30-10 roles based on selected mode
+        const roles = assignRoles(colors, themeMode);
+
+        currentPaletteData = { colors, palettes, neutrals, roles };
 
         renderResults(currentPaletteData);
 
@@ -197,12 +346,13 @@
     // Render Results
     // =========================================
 
-    function renderResults({ colors, palettes, neutrals }) {
+    function renderResults({ colors, palettes, neutrals, roles }) {
+        renderRule(roles);
         renderDominantColors(colors);
         renderPalettes(palettes);
         renderNeutrals(neutrals);
-        renderThemeJSON(colors, palettes);
-        renderDashboardPreview(colors, palettes);
+        renderThemeJSON(colors, palettes, roles);
+        renderDashboardPreview(colors, palettes, roles);
     }
 
     function renderDominantColors(colors) {
@@ -272,37 +422,69 @@
         });
     }
 
-    function renderThemeJSON(colors, palettes) {
-        // Build Power BI theme JSON
-        const dataColors = colors.map(c => c.hex);
+    function renderThemeJSON(colors, palettes, roles) {
+        const { base, main, accent, others, mode } = roles;
+        const isDark = mode === 'dark';
 
-        // Create foreground / background from neutrals
+        // Data colors ordered by 60-30-10: main (30%) first, accent (10%) second, then the rest
+        const dataColors = [main.hex, accent.hex, ...others.map(c => c.hex)]
+            .filter((hex, i, arr) => arr.indexOf(hex) === i);
+
+        const mainPalette = palettes.find(p => p.base.hex === main.hex) || palettes[0];
+
         const theme = {
-            name: "Custom Brand Theme",
+            name: `RW Brand Theme — ${isDark ? 'Escuro' : 'Claro'} (60-30-10)`,
             dataColors: dataColors,
-            background: "#ffffff",
-            foreground: "#1a1a1a",
-            tableAccent: colors[0]?.hex || "#6366f1",
-            maximum: colors[0]?.hex || "#6366f1",
-            center: palettes[0]?.shades[3]?.hex || "#a0a0a0",
-            minimum: palettes[0]?.shades[1]?.hex || "#e0e0e0",
-            good: colors.length > 1 ? colors[1].hex : "#34d399",
-            neutral: "#a1a1aa",
+            background: base.surface,
+            foreground: base.text,
+            tableAccent: accent.hex,
+            maximum: main.hex,
+            center: mainPalette?.shades[4]?.hex || main.hex,
+            minimum: isDark
+                ? (mainPalette?.shades[8]?.hex || base.surface)
+                : (mainPalette?.shades[1]?.hex || base.canvas),
+            good: "#22c55e",
+            neutral: base.textSecondary,
             bad: "#ef4444",
+            textClasses: {
+                title: { color: base.text, fontFace: "Segoe UI Semibold", fontSize: 14 },
+                label: { color: base.textSecondary, fontFace: "Segoe UI", fontSize: 10 },
+                callout: { color: base.text, fontFace: "Segoe UI", fontSize: 28 },
+                header: { color: base.text, fontFace: "Segoe UI Semibold", fontSize: 12 }
+            },
             visualStyles: {
                 "*": {
                     "*": {
                         "*": [{
                             fontSize: 10,
                             fontFamily: "Segoe UI",
-                            color: { solid: { color: "#333333" } }
+                            color: { solid: { color: base.text } }
+                        }],
+                        background: [{
+                            color: { solid: { color: base.surface } },
+                            transparency: 0
+                        }],
+                        border: [{
+                            show: true,
+                            color: { solid: { color: base.border } },
+                            radius: 8
+                        }],
+                        title: [{
+                            show: true,
+                            fontColor: { solid: { color: base.text } },
+                            background: { solid: { color: base.surface } },
+                            fontSize: 12
                         }]
                     }
                 },
                 page: {
                     "*": {
                         background: [{
-                            color: { solid: { color: "#f8f9fa" } },
+                            color: { solid: { color: base.canvas } },
+                            transparency: 0
+                        }],
+                        outspace: [{
+                            color: { solid: { color: base.canvas } },
                             transparency: 0
                         }]
                     }
@@ -341,89 +523,95 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'power-bi-theme.json';
+            a.download = `power-bi-theme-${themeMode === 'dark' ? 'escuro' : 'claro'}.json`;
             a.click();
             URL.revokeObjectURL(url);
             showToast('✅ Tema baixado!');
         };
     }
 
-    function renderDashboardPreview(colors, palettes) {
-        const c = colors;
-        const primary = c[0]?.hex || '#6366f1';
-        const secondary = c[1]?.hex || '#a855f7';
-        const tertiary = c[2]?.hex || '#34d399';
-        const quaternary = c[3]?.hex || '#f59e0b';
+    function renderDashboardPreview(colors, palettes, roles) {
+        const { base, main, accent } = roles;
+        const kpiText = ColorExtractor.getContrastColor(base.surface);
 
-        const lightShades = palettes.map(p => p.shades[1]?.hex || '#f0f0f0');
-        const darkShades = palettes.map(p => p.shades[7]?.hex || '#333333');
+        // 60% = canvas + surfaces | 30% = main color on charts | 10% = accent highlights
+        dashboardPreview.style.background = base.canvas;
+        dashboardPreview.style.borderColor = base.border;
+
+        const kpis = [
+            { label: 'Receita', value: 'R$ 2.4M', highlight: false },
+            { label: 'Margem', value: '34.2%', highlight: false },
+            { label: 'Clientes', value: '1.847', highlight: false },
+            { label: 'Ticket Médio', value: 'R$ 189', highlight: true }
+        ];
 
         dashboardPreview.innerHTML = `
-            <div class="preview-header">
-                <div class="preview-title">
-                    <div class="preview-title-dot" style="background:${primary}"></div>
+            <div class="preview-header" style="border-color:${base.border}">
+                <div class="preview-title" style="color:${ColorExtractor.getContrastColor(base.canvas)}">
+                    <div class="preview-title-dot" style="background:${accent.hex}"></div>
                     Dashboard Comercial
                 </div>
-                <span class="preview-date">Mar 2026</span>
+                <span class="preview-date" style="color:${base.textSecondary}">Mar 2026</span>
             </div>
 
             <div class="preview-kpis">
-                <div class="preview-kpi" style="background: ${lightShades[0] || '#f0f0f0'}; color: ${darkShades[0] || '#333'}">
-                    <div class="preview-kpi::before" style="background:${primary}"></div>
-                    <div class="preview-kpi-label" style="color: ${ColorExtractor.getContrastColor(lightShades[0] || '#f0f0f0')}; opacity: 0.7;">Receita</div>
-                    <div class="preview-kpi-value" style="color: ${ColorExtractor.getContrastColor(lightShades[0] || '#f0f0f0')}">R$ 2.4M</div>
-                </div>
-                <div class="preview-kpi" style="background: ${lightShades[1] || lightShades[0] || '#f0f0f0'}; color: ${darkShades[1] || '#333'}">
-                    <div class="preview-kpi-label" style="color: ${ColorExtractor.getContrastColor(lightShades[1] || lightShades[0] || '#f0f0f0')}; opacity: 0.7;">Margem</div>
-                    <div class="preview-kpi-value" style="color: ${ColorExtractor.getContrastColor(lightShades[1] || lightShades[0] || '#f0f0f0')}">34.2%</div>
-                </div>
-                <div class="preview-kpi" style="background: ${lightShades[2] || lightShades[0] || '#f0f0f0'}; color: ${darkShades[2] || '#333'}">
-                    <div class="preview-kpi-label" style="color: ${ColorExtractor.getContrastColor(lightShades[2] || lightShades[0] || '#f0f0f0')}; opacity: 0.7;">Clientes</div>
-                    <div class="preview-kpi-value" style="color: ${ColorExtractor.getContrastColor(lightShades[2] || lightShades[0] || '#f0f0f0')}">1.847</div>
-                </div>
-                <div class="preview-kpi" style="background: ${lightShades[3] || lightShades[0] || '#f0f0f0'}; color: ${darkShades[3] || '#333'}">
-                    <div class="preview-kpi-label" style="color: ${ColorExtractor.getContrastColor(lightShades[3] || lightShades[0] || '#f0f0f0')}; opacity: 0.7;">Ticket Médio</div>
-                    <div class="preview-kpi-value" style="color: ${ColorExtractor.getContrastColor(lightShades[3] || lightShades[0] || '#f0f0f0')}">R$ 189</div>
-                </div>
+                ${kpis.map(k => {
+                    const bg = k.highlight ? accent.hex : base.surface;
+                    const txt = k.highlight ? ColorExtractor.getContrastColor(accent.hex) : kpiText;
+                    const topBar = k.highlight ? 'transparent' : main.hex;
+                    return `
+                        <div class="preview-kpi" style="background:${bg};border:1px solid ${base.border}">
+                            <div class="preview-kpi-topbar" style="background:${topBar}"></div>
+                            <div class="preview-kpi-label" style="color:${txt};opacity:0.7;">${k.label}</div>
+                            <div class="preview-kpi-value" style="color:${txt}">${k.value}</div>
+                        </div>
+                    `;
+                }).join('')}
             </div>
 
             <div class="preview-charts">
-                <div class="preview-chart">
-                    <div class="preview-chart-title">Vendas por Mês</div>
+                <div class="preview-chart" style="background:${base.surface};border-color:${base.border}">
+                    <div class="preview-chart-title" style="color:${base.textSecondary}">Vendas por Mês</div>
                     <div class="preview-bars">
-                        ${generateBars(colors)}
+                        ${generateBars(main.hex, accent.hex)}
                     </div>
                 </div>
-                <div class="preview-chart">
-                    <div class="preview-chart-title">Distribuição</div>
+                <div class="preview-chart" style="background:${base.surface};border-color:${base.border}">
+                    <div class="preview-chart-title" style="color:${base.textSecondary}">Distribuição</div>
                     <div class="preview-donut-wrapper">
-                        ${generateDonut(colors)}
+                        ${generateDonut(colors, base.surface)}
                     </div>
                 </div>
             </div>
-        `;
 
-        // Add KPI top border
-        dashboardPreview.querySelectorAll('.preview-kpi').forEach((kpi, i) => {
-            const color = colors[i % colors.length]?.hex || primary;
-            kpi.style.position = 'relative';
-            kpi.style.overflow = 'hidden';
-            kpi.style.borderRadius = '10px';
-            const bar = document.createElement('div');
-            bar.style.cssText = `position:absolute;top:0;left:0;right:0;height:3px;background:${color};`;
-            kpi.prepend(bar);
-        });
+            <div class="preview-rule-legend">
+                <span class="preview-legend-item" style="color:${base.textSecondary}">
+                    <span class="preview-legend-dot" style="background:${base.canvas};border:1px solid ${base.border}"></span>
+                    60% Base
+                </span>
+                <span class="preview-legend-item" style="color:${base.textSecondary}">
+                    <span class="preview-legend-dot" style="background:${main.hex}"></span>
+                    30% Principal
+                </span>
+                <span class="preview-legend-item" style="color:${base.textSecondary}">
+                    <span class="preview-legend-dot" style="background:${accent.hex}"></span>
+                    10% Destaque
+                </span>
+            </div>
+        `;
     }
 
-    function generateBars(colors) {
+    function generateBars(mainHex, accentHex) {
         const heights = [45, 65, 55, 80, 70, 90, 75, 85, 60, 70, 55, 95];
-        return heights.map((h, i) => {
-            const color = colors[i % colors.length]?.hex || '#6366f1';
+        const maxH = Math.max(...heights);
+        // 30% color on all bars; 10% accent only on the peak
+        return heights.map(h => {
+            const color = h === maxH ? accentHex : mainHex;
             return `<div class="preview-bar" style="height:${h}%;background:${color};"></div>`;
         }).join('');
     }
 
-    function generateDonut(colors) {
+    function generateDonut(colors, holeColor) {
         const total = colors.length;
         const segments = colors.map((c, i) => {
             const percent = c.percent || (100 / total);
@@ -453,7 +641,7 @@
                         background:${gradient};
                         display:flex;align-items:center;justify-content:center;
                     ">
-                        <div style="width:18px;height:18px;border-radius:50%;background:#1c1c20;"></div>
+                        <div style="width:18px;height:18px;border-radius:50%;background:${holeColor};"></div>
                     </div>
                 </foreignObject>
             </svg>

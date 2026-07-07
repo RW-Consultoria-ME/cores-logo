@@ -659,6 +659,168 @@ img {
 }
 
 /* =============================================
+   Theme Mode Toggle (claro / escuro)
+   ============================================= */
+.mode-toggle {
+    display: inline-flex;
+    gap: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: 100px;
+    padding: 5px;
+    margin-bottom: 24px;
+}
+
+.mode-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 22px;
+    border-radius: 100px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.25s var(--ease-out);
+}
+
+.mode-btn:hover {
+    color: var(--text-primary);
+}
+
+.mode-btn.active {
+    background: linear-gradient(135deg, var(--primary-500), var(--accent-500));
+    color: white;
+    box-shadow: 0 2px 12px rgba(168, 85, 247, 0.35);
+}
+
+.color-count-selector .mode-toggle {
+    margin-bottom: 28px;
+}
+
+.results-mode-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 56px;
+}
+
+.results-mode-wrapper .mode-toggle {
+    margin-bottom: 0;
+}
+
+.results-mode-label {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+/* =============================================
+   60-30-10 Rule Block
+   ============================================= */
+.rule-bar {
+    display: flex;
+    max-width: 900px;
+    margin: 0 auto 32px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-default);
+}
+
+.rule-bar-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    font-family: 'JetBrains Mono', monospace;
+    transition: width 0.5s var(--ease-out);
+}
+
+.rule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.rule-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    transition: all 0.3s var(--ease-out);
+}
+
+.rule-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+}
+
+.rule-card-percent {
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--primary-400), var(--accent-400));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.rule-card-title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.rule-card-desc {
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.rule-card-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.rule-swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.rule-swatch-color {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: transform 0.2s var(--ease-spring);
+}
+
+.rule-swatch:hover .rule-swatch-color {
+    transform: scale(1.12);
+}
+
+.rule-swatch-hex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.625rem;
+    color: var(--text-muted);
+}
+
+.rule-swatch.copied .rule-swatch-color {
+    box-shadow: 0 0 0 2px #34d399;
+}
+
+/* =============================================
    Results Section
    ============================================= */
 .results-section {
@@ -1038,13 +1200,35 @@ img {
     overflow: hidden;
 }
 
-.preview-kpi::before {
-    content: '';
+.preview-kpi-topbar {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 3px;
+}
+
+.preview-rule-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.preview-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.preview-legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    display: inline-block;
 }
 
 .preview-kpi-label {
