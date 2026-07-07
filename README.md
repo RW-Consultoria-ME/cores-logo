@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="image/logo.jpg" alt="RW Consultoria" width="180" />
+  <img src="image/logo.svg" alt="RW Consultoria" width="180" />
 </p>
 
 <h1 align="center">PBI Palette</h1>
@@ -176,7 +176,7 @@ Este projeto é proprietário da **RW Consultoria**. Todos os direitos reservado
 ---
 
 <p align="center">
-  <img src="image/logo.jpg" alt="RW Consultoria" width="80" />
+  <img src="image/logo.svg" alt="RW Consultoria" width="80" />
   <br/>
   <strong>RW Consultoria</strong><br/>
   <sub>Transformando dados em decisões inteligentes</sub>
